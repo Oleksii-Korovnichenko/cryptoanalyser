@@ -4,13 +4,14 @@ import com.javarush.cryptoanalyzer.korovnichenko.exception.ApplicationException;
 import com.javarush.cryptoanalyzer.korovnichenko.repository.Alphabets;
 
 public class CaesarCipher implements CipherStrategy {
+    public static final String KEY_ERROR_MESSAGE = "Key for Caesar cipher must be integer number";
     @Override
     public String encrypt(String input, String key, String alphabet) {
         int shift = 0;
         try {
             shift = Integer.parseInt(key);
         } catch (NumberFormatException e) {
-            throw new ApplicationException("Key for Caesar cipher must be integer number", e);
+            throw new ApplicationException(KEY_ERROR_MESSAGE, e);
         }
         return shiftText(input, shift, alphabet);
     }
@@ -21,7 +22,7 @@ public class CaesarCipher implements CipherStrategy {
         try {
             shift = Integer.parseInt(key);
         } catch (NumberFormatException e) {
-            throw new ApplicationException("Key for Caesar cipher must be integer number", e);
+            throw new ApplicationException(KEY_ERROR_MESSAGE, e);
         }
         return shiftText(input, -shift, alphabet);
     }
@@ -37,17 +38,14 @@ public class CaesarCipher implements CipherStrategy {
         }
 
         for (char c : input.toCharArray()) {
-            boolean isUpper = Character.isUpperCase(c);
-            char lowerC = Character.toLowerCase(c);
-
-            int index = detectedAlphabet.indexOf(lowerC);
+            int index = detectedAlphabet.indexOf(String.valueOf(c));
             if (index == -1) {
                 result.append(c);
             } else {
                 int newIndex = (index + shift) % alphabetLength;
                 if (newIndex < 0) newIndex += alphabetLength;
                 char shifted = detectedAlphabet.charAt(newIndex);
-                result.append(isUpper ? Character.toUpperCase(shifted) : shifted);
+                result.append(shifted);
             }
         }
         return result.toString();

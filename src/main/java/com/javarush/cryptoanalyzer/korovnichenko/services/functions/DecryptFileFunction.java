@@ -1,5 +1,6 @@
 package com.javarush.cryptoanalyzer.korovnichenko.services.functions;
 
+import static com.javarush.cryptoanalyzer.korovnichenko.constants.ConsoleUIConstants.DEFAULT_ALPHABET;
 import static com.javarush.cryptoanalyzer.korovnichenko.repository.ResultCode.ERROR;
 import static com.javarush.cryptoanalyzer.korovnichenko.repository.ResultCode.SUCCESS;
 
@@ -26,6 +27,9 @@ public class DecryptFileFunction implements Function {
     public static final int ALGORITHM_INDEX = 3;
     public static final int ALPHABET_INDEX = 4;
     public static final String DECRYPTED = "[DECRYPTED]";
+    public static final String EMPTY_FILE = "Empty file: ";
+    public static final String IO_ERROR_MESSAGE = "Can't process file:";
+    public static final String DECRYPT_ERROR_MESSAGE = "Decryption finished with error: ";
     private static final int LINES_TO_ANALYSE_ALPHABET = 100;
 
     private CipherService cipherService;
@@ -39,12 +43,10 @@ public class DecryptFileFunction implements Function {
         String key = parameters[KEY_INDEX];
         Cipher cipher = null;
 
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        new FileInputStream(fileInputPath), StandardCharsets.UTF_8));
-             BufferedWriter writer = new BufferedWriter(
-                     new OutputStreamWriter(
-                             new FileOutputStream(fileOutputPath), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(fileInputPath), StandardCharsets.UTF_8));
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                     new FileOutputStream(fileOutputPath), StandardCharsets.UTF_8))) {
 
             //detect crypto algorithm from DB or by default: CAESAR
             EncryptionAlgorithm algorithm = parameters.length >= 4
@@ -52,8 +54,8 @@ public class DecryptFileFunction implements Function {
                     : EncryptionAlgorithm.CAESAR;
 
             //autodetect alphabet by analysing N first lines in file or error occurred
-            String alphabetParam = parameters.length >= 5 ? parameters[ALPHABET_INDEX] : "auto";
-            String detectedAlphabetFromDB = "auto".equalsIgnoreCase(alphabetParam)
+            String alphabetParam = parameters.length >= 5 ? parameters[ALPHABET_INDEX] : DEFAULT_ALPHABET;
+            String detectedAlphabetFromDB = DEFAULT_ALPHABET.equalsIgnoreCase(alphabetParam)
                     ? Alphabets.autodetectAlphabetType(fileInputPath, LINES_TO_ANALYSE_ALPHABET)
                     : Alphabets.findAlphabetByName(alphabetParam);
 
@@ -63,7 +65,7 @@ public class DecryptFileFunction implements Function {
             String firstLine = reader.readLine();
             if (firstLine == null) {
                 return new Result(ERROR, cipher,
-                        new ApplicationException("Empty file: " + fileInputPath));
+                        new ApplicationException(EMPTY_FILE+ fileInputPath));
             }
 
             cipher.setText(firstLine);
@@ -79,11 +81,9 @@ public class DecryptFileFunction implements Function {
 
             return new Result(SUCCESS, cipher);
         } catch (IOException e) {
-            return new Result(ERROR, cipher,
-                    new ApplicationException("Can't process file: " + e.getMessage()));
+            return new Result(ERROR, cipher, new ApplicationException(IO_ERROR_MESSAGE + e.getMessage()));
         } catch (Exception e) {
-            return new Result(ERROR, cipher,
-                    new ApplicationException("Decryption finished with error: ", e));
+            return new Result(ERROR, cipher, new ApplicationException(DECRYPT_ERROR_MESSAGE, e));
         }
     }
 

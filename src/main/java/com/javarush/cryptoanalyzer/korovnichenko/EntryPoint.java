@@ -9,63 +9,61 @@ import com.javarush.cryptoanalyzer.korovnichenko.ui.UI;
 
 import java.util.Scanner;
 
+import static com.javarush.cryptoanalyzer.korovnichenko.constants.ConsoleUIConstants.*;
+
 public class EntryPoint {
     public static void main(String[] args) {
-        Application application;
-        MainController controller;
-        Result result;
+
         if (args != null && args.length >= 3) {
-            // args from command line without ui
-            UI consoleUI = new ConsoleUI(args);
-            controller = new MainController(consoleUI);
-            application = new Application(controller);
-            result = application.run();
-            application.printResult(result);
+            runNoConsoleMode(args);
         } else {
-            Scanner scanner = new Scanner(System.in);
-            String input;
-
-            while (true) {
-                System.out.println("Choose working mode: type [GUI] or default : [ConsoleUI]");
-                System.out.println("Type 'exit' to quit the program.");
-                input = scanner.nextLine().trim();
-
-                if (input.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting the program. Goodbye!");
-                    break;
-                }
-
-                switch (input.toUpperCase()) {
-                    case "GUI": {
-                        System.out.println("Launching in GUI mode ...");
-                        try {
-                            GUI.launchUI(args);
-                        } catch (NoClassDefFoundError error) {
-                            System.out.println("Can't launch GUI mode: \n " +
-                                    "Run application with parameters: \n" +
-                                    "java --module-path [path for javafx-sdk\\lib] \n" +
-                                    "--add-modules javafx.controls,javafx.graphics \n" +
-                                    "-jar cryptoanalyzer-ver1.0.jar");
-                        }
-                        break;
-                    }
-                    case "":
-                    case "CONSOLE_UI": {
-                        UI consoleUI = new ConsoleUI();
-                        controller = new MainController(consoleUI);
-
-                        application = new Application(controller);
-                        result = application.run();
-                        application.printResult(result);
-                        break;
-                    }
-                    default: {
-                        System.out.println("Invalid input. Type GUI, CONSOLE_UI or exit.");
-                        break;
-                    }
-                }
-            }
-            scanner.close();
+            tryRunWithFXGuiMode(args);
         }
     }
+
+    // run app with args from command line without ui
+    public static void runNoConsoleMode(String[] args) {
+        UI consoleUI = new ConsoleUI(args);
+        MainController controller = new MainController(consoleUI);
+        Application application = new Application(controller);
+        Result result = application.run();
+        application.printResult(result);
+    }
+
+    // run App with ConsoleUI without args
+    public static void runConsoleMode() {
+        UI consoleUI = new ConsoleUI();
+        MainController controller = new MainController(consoleUI);
+        Application application = new Application(controller);
+        Result result = application.run();
+        application.printResult(result);
+    }
+
+    public static void tryRunWithFXGuiMode(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        while (true) {
+            System.out.println(CHOOSE_THE_MODE);
+            input = scanner.nextLine().trim();
+
+            if (input.equalsIgnoreCase(EXIT)) {
+                System.out.println(EXIT_MESSAGE);
+                break;
+            }
+
+            if (input.toUpperCase().equals(GUI_MODE)) {
+                System.out.println(LAUNCH_GUI_MESSAGE);
+                try {
+                    GUI.launchUI(args);
+                } catch (NoClassDefFoundError error) {
+                    System.out.println(GUI_LAUNCH_PROBLEM);
+                }
+            } else {
+                runConsoleMode();
+            }
+        }
+        scanner.close();
+    }
+
 }

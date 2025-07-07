@@ -1,12 +1,19 @@
 package com.javarush.cryptoanalyzer.korovnichenko.ui;
 
-import com.javarush.cryptoanalyzer.korovnichenko.model.Result;
-import java.util.Scanner;
-
 import static com.javarush.cryptoanalyzer.korovnichenko.constants.ApplicationCompletionConstants.*;
 import static com.javarush.cryptoanalyzer.korovnichenko.constants.ConsoleUIConstants.*;
 
+import com.javarush.cryptoanalyzer.korovnichenko.model.Result;
+import java.util.Scanner;
+
 public class ConsoleUI implements UI {
+    private static final int PARAMS_COUNT = 4;
+    private static final int MODE_INDEX = 0;
+    private static final int INPUT_FILE_INDEX = 1;
+    private static final int KEY_INDEX = 2;
+    private static final int CIPHER_INDEX = 3;
+
+
     private String[] params;
 
     public ConsoleUI() {
@@ -18,13 +25,13 @@ public class ConsoleUI implements UI {
 
     @Override
     public String[] getUIParameters() {
-        if (params != null && params.length >=4) {
-            String cipher = "CAESAR";
-            if (params.length == 4) {
-                cipher = params[3];
+        if (params != null && params.length >= PARAMS_COUNT) {
+            String cipher = DEFAULT_ALGORITHM;
+            if (params.length == PARAMS_COUNT) {
+                cipher = params[CIPHER_INDEX];
             }
             //mode, file, key, cipher,
-            return new String[] { params[0], params[1], params[2], cipher};
+            return new String[] { params[MODE_INDEX], params[INPUT_FILE_INDEX], params[KEY_INDEX], cipher};
         }
 
         System.out.println(LAUNCH);
@@ -36,30 +43,30 @@ public class ConsoleUI implements UI {
         String input = scanner.nextLine().trim();
         String[] parts = input.split("\\s+");
 
-        String mode = promptIfMissing(parts, 0, PROMPT_MODE, null);
-        String alphabet = "auto";
+        String mode = promptIfMissing(parts, MODE_INDEX, PROMPT_MODE, null);
+        String alphabet = DEFAULT_ALPHABET;
 
-        if (!mode.equalsIgnoreCase("brute_force")) {
+        if (!mode.equalsIgnoreCase(BRUTE_FORCE)) {
             String file = "";
-            if (mode.equalsIgnoreCase("encrypt")) {
-                file = promptIfMissing(parts, 1, PROMPT_FILE, "input.txt");
+            if (mode.equalsIgnoreCase(ENCRYPT)) {
+                file = promptIfMissing(parts, 1, PROMPT_FILE, DEFAULT_SOURCE_FILE_PATH);
             } else {
-                file = promptIfMissing(parts, 1, PROMPT_FILE, "input[ENCRYPTED].txt");
+                file = promptIfMissing(parts, 1, PROMPT_FILE, DEFAULT_ENCRYPT_FILE_PATH);
             }
-            String key = promptValidKey(parts, 2, PROMPT_KEY, "3");
-            String cipher = promptIfMissing(parts, 3, PROMPT_CIPHER, "caesar");
+            String key = promptValidKey(parts, 2, PROMPT_KEY, DEFAULT_KEY);
+            String cipher = promptIfMissing(parts, 3, PROMPT_CIPHER, DEFAULT_ALGORITHM);
 
-            if (parts.length > 4 && !parts[4].isBlank()) {
-                alphabet = parts[4];
+            if (parts.length > PARAMS_COUNT && !parts[PARAMS_COUNT].isBlank()) {
+                alphabet = parts[PARAMS_COUNT];
             }
 
             return new String[] { mode, file, key, cipher, alphabet };
         } else {
-            String file = promptIfMissing(parts, 1, PROMPT_FILE, "input[ENCRYPTED].txt");
-            String analysisFile = promptIfMissing(parts, 2, PROMPT_ANALYSIS_FILE, "static-analysis.txt");
+            String file = promptIfMissing(parts, INPUT_FILE_INDEX, PROMPT_FILE, DEFAULT_ENCRYPT_FILE_PATH);
+            String analysisFile = promptIfMissing(parts, KEY_INDEX, PROMPT_ANALYSIS_FILE, DEFAULT_ANALYSE_FILE_PATH);
 
-            if (parts.length > 3 && !parts[3].isBlank()) {
-                alphabet = parts[3];
+            if (parts.length > CIPHER_INDEX && !parts[CIPHER_INDEX].isBlank()) {
+                alphabet = parts[CIPHER_INDEX];
             }
 
             return new String[] { mode, file, analysisFile, alphabet };

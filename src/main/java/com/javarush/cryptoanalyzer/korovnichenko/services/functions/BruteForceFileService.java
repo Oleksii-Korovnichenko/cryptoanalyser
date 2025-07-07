@@ -1,4 +1,6 @@
 package com.javarush.cryptoanalyzer.korovnichenko.services.functions;
+
+import static com.javarush.cryptoanalyzer.korovnichenko.constants.ConsoleUIConstants.DEFAULT_ALPHABET;
 import static com.javarush.cryptoanalyzer.korovnichenko.repository.ResultCode.ERROR;
 import static com.javarush.cryptoanalyzer.korovnichenko.repository.ResultCode.SUCCESS;
 
@@ -20,6 +22,8 @@ public class BruteForceFileService implements Function {
     private static final int ALPHABET_INDEX = 3;
     private static final int LINES_TO_ANALYSE_ALPHABET = 100;
     private static final String DECRYPTED = "[DECRYPTED]";
+    public static final String IO_ERROR_MESSAGE = "Can't process file:";
+    public static final String BRUTE_ERROR_MESSAGE = "Brute force finished with error: ";
 
     private final StatisticalAnalyzer statisticalAnalyzer = new StatisticalAnalyzer();
     private final CaesarCipher caesarCipher = new CaesarCipher();
@@ -41,9 +45,9 @@ public class BruteForceFileService implements Function {
             String analysis = Files.readString(Paths.get(fileForStatAnalysePath));
 
             //autodetect alphabet by analysing N first lines in file or autodetect
-            String alphabetParam = parameters.length >= 4 ? parameters[ALPHABET_INDEX] : "auto";
+            String alphabetParam = parameters.length >= 4 ? parameters[ALPHABET_INDEX] : DEFAULT_ALPHABET;
 
-            String detectedAlphabetFromDB = "auto".equalsIgnoreCase(alphabetParam)
+            String detectedAlphabetFromDB = DEFAULT_ALPHABET.equalsIgnoreCase(alphabetParam)
                     ? Alphabets.autodetectAlphabetType(fileInputPath, LINES_TO_ANALYSE_ALPHABET)
                     : Alphabets.findAlphabetByName(alphabetParam);
 
@@ -68,9 +72,9 @@ public class BruteForceFileService implements Function {
             return new Result(SUCCESS, cipher);
 
         } catch (IOException e) {
-            return new Result(ERROR, cipher, new ApplicationException("Can't process file: " + e.getMessage()));
+            return new Result(ERROR, cipher, new ApplicationException(IO_ERROR_MESSAGE + e.getMessage()));
         } catch (Exception e) {
-            return new Result(ERROR, cipher, new ApplicationException("Brute force finished with error: " + e.getMessage()));
+            return new Result(ERROR, cipher, new ApplicationException(BRUTE_ERROR_MESSAGE + e.getMessage()));
         }
     }
 
