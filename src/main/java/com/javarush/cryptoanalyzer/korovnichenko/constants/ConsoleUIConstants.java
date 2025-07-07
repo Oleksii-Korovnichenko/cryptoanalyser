@@ -20,7 +20,7 @@ public class ConsoleUIConstants {
     public static final String USAGE = """
             =============================================================================
             For using please type commands like:
-            ----------------------------------------------------------------------------- 
+            -----------------------------------------------------------------------------
             \u001B[32mencrypt/decrypt input.txt 5 caesar [optional: ALPHABET_TYPE]\u001B[0m
             ------------------------------------------------------------------------------
             \u001B[32mbrute_force input[ENCRYPTED].txt fileForStatAnalyse [optional: ALPHABET_TYPE]\u001B[0m
@@ -45,8 +45,5 @@ public class ConsoleUIConstants {
     public static final String DEFAULT_ANALYSE_FILE_PATH = "static-analysis.txt";
     public static final String BRUTE_FORCE = "brute_force";
     public static final String ENCRYPT = "encrypt";
-
-
-
-
+    public static final String WRONG_CAESAR_KEY_MESSAGE = "Key fo Caesar cipher must be integer value: ";
 }

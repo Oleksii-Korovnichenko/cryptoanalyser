@@ -47,7 +47,7 @@ public class ConsoleUI implements UI {
         String alphabet = DEFAULT_ALPHABET;
 
         if (!mode.equalsIgnoreCase(BRUTE_FORCE)) {
-            String file = "";
+            String file;
             if (mode.equalsIgnoreCase(ENCRYPT)) {
                 file = promptIfMissing(parts, 1, PROMPT_FILE, DEFAULT_SOURCE_FILE_PATH);
             } else {
@@ -119,7 +119,7 @@ public class ConsoleUI implements UI {
                     Integer.parseInt(key);
                     return key;
                 } catch (NumberFormatException e) {
-                    System.out.println("Key fo Caesar cipher must be integer value: " + key);
+                    System.out.println(WRONG_CAESAR_KEY_MESSAGE + key);
                 }
             }
 
