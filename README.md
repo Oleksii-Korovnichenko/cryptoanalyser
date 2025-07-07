@@ -74,7 +74,7 @@ java --module-path /шлях/до/javafx-sdk-17/lib \
 🧪 Приклад запуску з JavaFX вручну
 java --module-path /шлях/до/javafx-sdk-17/lib \
      --add-modules javafx.controls,javafx.fxml \
-     -jar cryptoanalyser.jar gui
+     -jar cryptoanalyser.jar далі gui
 
 🤝 Автор
 Oleksii Korovnichenko
