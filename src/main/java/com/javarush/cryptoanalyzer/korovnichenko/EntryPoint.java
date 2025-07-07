@@ -10,8 +10,6 @@ import com.javarush.cryptoanalyzer.korovnichenko.ui.UI;
 import java.util.Scanner;
 
 public class EntryPoint {
-    public static final int UI_INDEX = 0;
-
     public static void main(String[] args) {
         Application application;
         MainController controller;
