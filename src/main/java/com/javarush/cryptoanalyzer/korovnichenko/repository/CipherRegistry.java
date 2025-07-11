@@ -3,6 +3,7 @@ package com.javarush.cryptoanalyzer.korovnichenko.repository;
 import com.javarush.cryptoanalyzer.korovnichenko.exception.ApplicationException;
 import com.javarush.cryptoanalyzer.korovnichenko.services.ciphers.CaesarCipher;
 import com.javarush.cryptoanalyzer.korovnichenko.services.ciphers.CipherStrategy;
+import com.javarush.cryptoanalyzer.korovnichenko.services.ciphers.VigenereCipher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,7 @@ public class CipherRegistry {
 
     static {
         strategies.put(EncryptionAlgorithm.CAESAR, new CaesarCipher());
-        //strategies.put(EncryptionAlgorithm.VYGINER, new VyginerCipher());
+        strategies.put(EncryptionAlgorithm.VIGENERE, new VigenereCipher());
     }
 
     public static CipherStrategy getStrategy(EncryptionAlgorithm algorithm) {

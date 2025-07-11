@@ -6,25 +6,25 @@ import com.javarush.cryptoanalyzer.korovnichenko.repository.Alphabets;
 public class CaesarCipher implements CipherStrategy {
     public static final String KEY_ERROR_MESSAGE = "Key for Caesar cipher must be integer number";
     @Override
-    public String encrypt(String input, String key, String alphabet) {
+    public String encrypt(String input, String key, String alphabetType) {
         int shift = 0;
         try {
             shift = Integer.parseInt(key);
         } catch (NumberFormatException e) {
             throw new ApplicationException(KEY_ERROR_MESSAGE, e);
         }
-        return shiftText(input, shift, alphabet);
+        return shiftText(input, shift, alphabetType);
     }
 
     @Override
-    public String decrypt(String input, String key, String alphabet) {
+    public String decrypt(String input, String key, String alphabetType) {
         int shift = 0;
         try {
             shift = Integer.parseInt(key);
         } catch (NumberFormatException e) {
             throw new ApplicationException(KEY_ERROR_MESSAGE, e);
         }
-        return shiftText(input, -shift, alphabet);
+        return shiftText(input, -shift, alphabetType);
     }
 
     public String shiftText(String input, int shift, String alphabetType) {

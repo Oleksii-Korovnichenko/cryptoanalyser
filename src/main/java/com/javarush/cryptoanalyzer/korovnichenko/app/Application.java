@@ -1,8 +1,10 @@
 package com.javarush.cryptoanalyzer.korovnichenko.app;
 
 import com.javarush.cryptoanalyzer.korovnichenko.controller.MainController;
+import com.javarush.cryptoanalyzer.korovnichenko.exception.ApplicationException;
 import com.javarush.cryptoanalyzer.korovnichenko.model.Result;
 import com.javarush.cryptoanalyzer.korovnichenko.repository.FunctionCode;
+import com.javarush.cryptoanalyzer.korovnichenko.repository.ResultCode;
 import com.javarush.cryptoanalyzer.korovnichenko.services.functions.Function;
 
 import static com.javarush.cryptoanalyzer.korovnichenko.constants.FunctionCodeConstants.BRUTE_FORCE;
@@ -23,7 +25,8 @@ public class Application {
         String[] parameters = mainController.getUi().getUIParameters();
         String mode = parameters[MODE_INDEX];
         Function function = getFunction(mode);
-        return function.execute(parameters);
+        Result result = function.execute(parameters);
+            return result;
     }
 
     public Function getFunction(String mode) {
@@ -39,3 +42,4 @@ public class Application {
         mainController.getUi().printResult(result);
     }
 }
+

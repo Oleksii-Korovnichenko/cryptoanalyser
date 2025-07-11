@@ -18,23 +18,22 @@ public class ConsoleUIConstants {
     public static final String GUI_MODE = "GUI";
     public static final String WELCOME = "Welcome to the Cryptographic Analyzer!";
     public static final String USAGE = """
-            =============================================================================
+            ==================================================================================================================
             For using please type commands like:
-            -----------------------------------------------------------------------------
-            \u001B[32mencrypt/decrypt input.txt 5 caesar [optional: ALPHABET_TYPE]\u001B[0m
-            ------------------------------------------------------------------------------
-            \u001B[32mbrute_force input[ENCRYPTED].txt fileForStatAnalyse [optional: ALPHABET_TYPE]\u001B[0m
-            -----------------------------------------------------------------------------
+            -----------------------------------------------------------------------------------------------------------------
+            \u001B[32mencrypt/decrypt input.txt 5 [default: caesar] [optional: ALPHABET_TYPE]\u001B[0m
+            -----------------------------------------------------------------------------------------------------------------
+            \u001B[32mbrute_force input[ENCRYPTED].txt fileForStatAnalyse [default :caesar] [optional: ALPHABET_TYPE]\u001B[0m
+            -----------------------------------------------------------------------------------------------------------------
             Alphabet types:
-            \u001B[32mUKR, ENG, UKR_WITH_PUNCT, ENG_WITH_PUNCT, MIXED,
-            UKR_WITH_PUNCT_WITH_NUMBERS, ENG_WITH_PUNCT_WITH_NUMBERS\u001B[0m
-            ==============================================================================
+            \u001B[32mUKR, ENG, UKR_WITH_PUNCT, ENG_WITH_PUNCT, MIXED, UKR_WITH_PUNCT_WITH_NUMBERS, ENG_WITH_PUNCT_WITH_NUMBERS\u001B[0m
+            ===================================================================================================================
             """;
     public static final String PROMPT_COMMAND = "Enter your command -> ";
     public static final String PROMPT_MODE = "Mode (encrypt/decrypt/brute_force)";
     public static final String PROMPT_FILE = "File name";
     public static final String PROMPT_KEY = "Key (integer)";
-    public static final String PROMPT_CIPHER = "Cipher (e.g., caesar)";
+    public static final String PROMPT_CIPHER = "Cipher (viginere, caesar)";
     public static final String PROMPT_ANALYSIS_FILE = "File name for frequency analyse";
     public static final String OUTPUT_FILE = "Файл после обработки: ";
     public static final String DEFAULT_SOURCE_FILE_PATH = "input.txt";

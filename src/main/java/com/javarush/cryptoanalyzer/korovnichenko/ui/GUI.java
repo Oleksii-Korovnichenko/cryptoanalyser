@@ -2,7 +2,9 @@ package com.javarush.cryptoanalyzer.korovnichenko.ui;
 
 import com.javarush.cryptoanalyzer.korovnichenko.app.Application;
 import com.javarush.cryptoanalyzer.korovnichenko.controller.MainController;
+import com.javarush.cryptoanalyzer.korovnichenko.exception.ApplicationException;
 import com.javarush.cryptoanalyzer.korovnichenko.model.Result;
+import com.javarush.cryptoanalyzer.korovnichenko.repository.ResultCode;
 import com.javarush.cryptoanalyzer.korovnichenko.services.io.FileService;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -111,7 +113,7 @@ public class GUI extends javafx.application.Application implements UI {
         });
 
         // Cipher type
-        cipherBox.getItems().addAll("Caesar", "Vyginer");
+        cipherBox.getItems().addAll("Caesar", "Vigenere");
         cipherBox.setValue("Caesar");
 
         // Input text area
@@ -178,27 +180,40 @@ public class GUI extends javafx.application.Application implements UI {
                 animation.play();
                 new Thread(() -> {
                     try {
+                        outputPreview.clear();
                         Application app = new Application(new MainController(this));
                         result = app.run();
-
-                            Platform.runLater(() -> {
-                                resultField.setText(new StringBuilder()
+                        Platform.runLater(() -> {
+                            try {
+                                StringBuilder builder = new StringBuilder()
                                         .append("Processing mode: ").append(selectedMode).append("\n")
                                         .append("Result filename: ").append(result.getUsedCipher().getFileOutputPath()).append("\n")
                                         .append("Selected cipher algorithm: ").append(result.getUsedCipher().getAlgorithm().name()).append("\n")
                                         .append("Selected alphabet: ").append(result.getUsedCipher().getAlphabetType()).append("\n")
                                         .append("Cipher key: ").append(result.getUsedCipher().getKey()).append("\n")
-                                        .append("Result of operation: ").append(result.getResultCode().name()).toString());
+                                        .append("Result of operation: ").append(result.getResultCode().name()).append("\n");
 
-                                if (result.getResultCode().name().equals("ERROR")) {
-                                    outputPreview.clear();
-                                    outputPreview.setText(result.getApplicationException().toString());
+                                if (result.getResultCode() == ResultCode.ERROR) {
+                                    ApplicationException ex = result.getApplicationException();
+                                    String message = (ex != null && ex.getMessage() != null)
+                                            ? ex.getMessage()
+                                            : "Unknown error occurred.";
+                                    builder.append(message);
+                                    outputPreview.setText(builder.toString());
                                 }
+
+                                resultField.setText(builder.toString());
+
                                 animation.stop();
                                 progressBar.setVisible(false);
                                 printResult(result);
-                            });
 
+                            } catch (Exception fxEx) {
+                                outputPreview.setText("Помилка у JavaFX-потоці: " + fxEx.getMessage());
+                                animation.stop();
+                                progressBar.setVisible(false);
+                            }
+                        });
                         } catch (Exception ex) {
                         Platform.runLater(() -> {
                             outputPreview.setText("Error: " + ex.getMessage());
@@ -272,7 +287,9 @@ public class GUI extends javafx.application.Application implements UI {
                     selectedMode,
                     inputFile != null ? inputFile.getAbsolutePath() : "",
                     FILE_FOR_STATISTICS,
+                    cipherBox.getValue(),
                     alphabet
+                    //TODO add the keyLengthField and return value
             };
         }
 
@@ -288,7 +305,10 @@ public class GUI extends javafx.application.Application implements UI {
     @Override
     public void printResult(Result result) {
         File resultFile = new File(result.getUsedCipher().getFileOutputPath());
-        outputPreview.setText(fileService.readFirstLines(resultFile, LINES_FOR_VIEW));
+        outputPreview.setText(fileService.readFirstLines(resultFile, LINES_FOR_VIEW)
+//                + "\n\n"
+//                + fileService.readFirstLines(new File("bruteforce_best_keys.txt"), LINES_FOR_VIEW)
+        );
     }
 
     public static void launchUI(String[] args) {
